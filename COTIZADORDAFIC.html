@@ -255,7 +255,17 @@
 
         <div class="servicio-grupo">
             <h3>Mensualidades</h3>
-            <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="600" id="pf_basico" data-es-mensualidad="true"><label for="pf_basico">Paquete PF Básico</label><small class="descripcion">Ideal para RESICO (PF) y Arrendamiento. Incluye: Cálculo y presentación de impuestos mensuales (ISR, IVA). Límite: 25 CFDI/mes.</small></div><div class="precio-control"><span class="precio">$600.00</span></div></div>
+            
+            <div class="servicio-item">
+                <div class="servicio-item-info">
+                    <input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="700" id="pf_basico" data-es-mensualidad="true">
+                    <label for="pf_basico">Paquete PF Básico</label>
+                    <small class="descripcion">Ideal para RESICO (PF) y Arrendamiento. Incluye: Cálculo y presentación de impuestos mensuales (ISR, IVA). Límite: 25 CFDI/mes.</small>
+                </div>
+                <div class="precio-control">
+                    <span class="precio">$700.00</span>
+                </div>
+            </div>
             <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="800" id="pf_intermedio" data-es-mensualidad="true"><label for="pf_intermedio">Paquete PF Intermedio (Plataformas)</label><small class="descripcion">Únicamente para Plataformas Digitales. Incluye: Cálculo de impuestos (ISR, IVA) y DIOT. Límite: 50 CFDI/mes.</small></div><div class="precio-control"><span class="precio">$800.00</span></div></div>
             <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="1000" id="pf_avanzado" data-es-mensualidad="true"><label for="pf_avanzado">Paquete PF Avanzado (RAEP)</label><small class="descripcion">Para Personas Físicas con Actividad Empresarial (RAEP). Incluye: Impuestos (ISR, IVA), DIOT y Cont. Electrónica. Límite: 100 CFDI/mes.</small></div><div class="precio-control"><span class="precio">$1,000.00</span></div></div>
             <hr style="border:0; border-top:1px dashed #ccc; margin: 15px 0;">
@@ -341,14 +351,13 @@
             function calcularTotal() {
                 let total = 0;
                 let descuentoAplicado = false;
-                // Validar si el campo referido existe antes de leerlo
                 const nombreReferidoEstandarizado = campoReferido ? campoReferido.value.trim().toUpperCase() : ""; 
                 const esReferidoValido = validReferrers.includes(nombreReferidoEstandarizado);
                 
                 const paqueteSeleccionado = document.querySelector('input[name="paquete_iguala"]:checked');
                 let precioPaquete = 0;
                 if (paqueteSeleccionado) {
-                    precioPaquete = parseFloat(paqueteSeleccionado.dataset.precio) || 0; // Asegura que sea número
+                    precioPaquete = parseFloat(paqueteSeleccionado.dataset.precio) || 0;
                     const esMensualidad = paqueteSeleccionado.dataset.esMensualidad === 'true';
                     if (esMensualidad && esReferidoValido) {
                         precioPaquete *= 0.90; 
@@ -356,13 +365,11 @@
                     }
                 }
                 total += precioPaquete;
-                // Validar si el textoDescuento existe
                 if (textoDescuento) {
                     textoDescuento.style.display = descuentoAplicado ? 'block' : 'none';
                 }
 
                 const nominaInput = document.getElementById('nomina');
-                // Validar si nominaInput existe
                 const nominaCantidad = nominaInput ? (parseInt(nominaInput.value) || 0) : 0;
                 if (nominaCantidad > 0) {
                     total += (parseFloat(nominaInput.dataset.precio) || 0) * nominaCantidad;
@@ -375,7 +382,6 @@
                     }
                 });
 
-                // Validar si totalDisplay existe
                 if (totalDisplay) {
                     totalDisplay.textContent = total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
                 }
@@ -389,8 +395,7 @@
             
             // --- Lógica Campos Condicionales ---
             function manejarVisibilidadCampos() {
-                 // Validar si los elementos existen
-                 if (radioAltaSatSi && grupoDeclaraciones && grupoAtraso && radioDeclaranNo) {
+                 if (radioAltaSatSi && grupoDeclaraciones && grupoAtraso && radioDeclaranNo && radioDeclaranSi) {
                      if (radioAltaSatSi.checked) {
                         grupoDeclaraciones.style.display = 'block';
                         if (radioDeclaranNo.checked) {
@@ -402,9 +407,8 @@
                         grupoDeclaraciones.style.display = 'none';
                         grupoAtraso.style.display = 'none';
                     }
-                 }
+                 } 
             }
-            // Añadir listeners solo si los elementos existen
             if(radioAltaSatSi) radioAltaSatSi.addEventListener('change', manejarVisibilidadCampos);
             if(radioAltaSatNo) radioAltaSatNo.addEventListener('change', manejarVisibilidadCampos);
             if(radioDeclaranSi) radioDeclaranSi.addEventListener('change', manejarVisibilidadCampos);
@@ -412,38 +416,38 @@
             
             // --- Función para Generar Mensaje WhatsApp ---
             function generarMensaje() {
-                // Leer info cliente (con validación de existencia)
+                // Leer info cliente
                 const nombreCliente = document.getElementById('nombre_cliente')?.value.trim() || "Cliente";
                 const giro = document.getElementById('giro')?.value.trim() || "No especificado";
                 const anios = document.getElementById('anios')?.value.trim() || "No especificado";
                 const altaSatRadio = document.querySelector('input[name="alta_sat"]:checked');
                 let infoSituacionFiscal = "Situación SAT no especificada.";
-                if (altaSatRadio) {
-                    if (altaSatRadio.value === 'si') {
-                        infoSituacionFiscal = " Sí estoy dado de alta en el SAT.";
-                        const declaranRadio = document.querySelector('input[name="declaran"]:checked');
-                        if (declaranRadio) {
-                            if (declaranRadio.value === 'si') {
-                                infoSituacionFiscal += " Actualmente declaro.";
-                            } else {
-                                infoSituacionFiscal += " No declaro actualmente.";
-                                const mesesAtrasoInput = document.getElementById('meses_atraso');
-                                const mesesAtraso = mesesAtrasoInput ? mesesAtrasoInput.value.trim() : "";
-                                if (mesesAtraso && mesesAtraso !== "0") {
-                                    infoSituacionFiscal += ` Tengo aproximadamente ${mesesAtraso} meses de atraso.`;
-                                }
-                            }
-                        } else {
-                            infoSituacionFiscal += " (No especificó si declara actualmente)";
-                        }
-                    } else {
-                        infoSituacionFiscal = " No estoy dado de alta en el SAT.";
-                    }
+                if (altaSatRadio) { 
+                    if (altaSatRadio.value === 'si') { 
+                        infoSituacionFiscal = " Sí estoy dado de alta en el SAT."; 
+                        const declaranRadio = document.querySelector('input[name="declaran"]:checked'); 
+                        if (declaranRadio) { 
+                            if (declaranRadio.value === 'si') { 
+                                infoSituacionFiscal += " Actualmente declaro."; 
+                            } else { 
+                                infoSituacionFiscal += " No declaro actualmente."; 
+                                const mesesAtrasoInput = document.getElementById('meses_atraso'); 
+                                const mesesAtraso = mesesAtrasoInput ? mesesAtrasoInput.value.trim() : ""; 
+                                if (mesesAtraso && mesesAtraso !== "0") { 
+                                    infoSituacionFiscal += ` Tengo aproximadamente ${mesesAtraso} meses de atraso.`; 
+                                } 
+                            } 
+                        } else { 
+                            infoSituacionFiscal += " (No especificó si declara actualmente)"; 
+                        } 
+                    } else { 
+                        infoSituacionFiscal = " No estoy dado de alta en el SAT."; 
+                    } 
                 }
                 const direccion = document.getElementById('direccion')?.value.trim() || "No especificada";
                 const diasVisita = document.getElementById('dias_visita')?.value.trim() || "No especificados";
 
-                // Construir parte inicial del mensaje
+                // Construir parte inicial
                 let mensajeIntro = `¡Hola DAFIC! Soy ${nombreCliente}. `;
                 mensajeIntro += `El giro de mi negocio es ${giro}. `;
                 mensajeIntro += `Tengo ${anios} años con él.`;
@@ -452,7 +456,7 @@
                 mensajeIntro += ` Me gustaría que me visitaran preferentemente: ${diasVisita}.`;
                 
                 // Resumen de servicios
-                let totalCalculado = 0;
+                let totalCalculado = 0; // Recalcular total para el mensaje
                 let hayMensualidad = false, hayRecurrentes = false, hayAdicionales = false, esRango = false;
                 const nombreReferido = campoReferido ? campoReferido.value.trim() : "";
                 const nombreReferidoEstandarizado = nombreReferido.toUpperCase();
@@ -463,129 +467,13 @@
                 // Mensualidades
                 const paqueteSeleccionado = document.querySelector('input[name="paquete_iguala"]:checked');
                 if (paqueteSeleccionado) { 
-                     let precio = parseFloat(paqueteSeleccionado.dataset.precio) || 0; 
-                     if (precio > 0) { 
+                     let precioOriginal = parseFloat(paqueteSeleccionado.dataset.precio) || 0; 
+                     let precioActual = precioOriginal; 
+                     if (precioOriginal > 0) { 
                          const label = document.querySelector(`label[for='${paqueteSeleccionado.id}']`); 
                          const precioTextoElement = paqueteSeleccionado.closest('.servicio-item')?.querySelector('.precio');
                          const precioTexto = precioTextoElement ? precioTextoElement.textContent : "";
                          const esMensualidad = paqueteSeleccionado.dataset.esMensualidad === 'true'; 
                          let precioFinalTexto = ""; 
-                         if (precioTexto.includes('-')) { 
-                             esRango = true; 
-                             if (esMensualidad && esReferidoValido) { 
-                                 let precioConDescuento = precio * 0.90; 
-                                 precioFinalTexto = ` (Rango: ${precioTexto}, con 10% desc. ref.)`; 
-                                 totalCalculado += precioConDescuento; 
-                                 descuentoAplicado = true; 
-                             } else { 
-                                 precioFinalTexto = ` (Rango: ${precioTexto})`; 
-                                 totalCalculado += precio; 
-                             } 
-                         } else { 
-                             if (esMensualidad && esReferidoValido) { 
-                                 let precioConDescuento = precio * 0.90; 
-                                 precioFinalTexto = ` ($${precioConDescuento.toFixed(2)}, con 10% desc. ref.)`; 
-                                 totalCalculado += precioConDescuento; 
-                                 descuentoAplicado = true; 
-                             } else { 
-                                 precioFinalTexto = ` ($${precio.toFixed(2)})`; 
-                                 totalCalculado += precio; 
-                             } 
-                         } 
-                         resumenServicios += `- Mensualidad: ${label ? label.textContent : 'Paquete seleccionado'}${precioFinalTexto}\n`; 
-                         hayMensualidad = true; 
-                     } 
-                }
-                
-                // Recurrentes
-                const nominaInput = document.getElementById('nomina');
-                const nominaCantidad = nominaInput ? (parseInt(nominaInput.value) || 0) : 0;
-                if (nominaCantidad > 0) { 
-                    const precio = parseFloat(nominaInput.dataset.precio) || 0; 
-                    const subtotal = precio * nominaCantidad; 
-                    resumenServicios += `- Empleados en Nómina: ${nominaCantidad} ($${subtotal.toFixed(2)})\n`; 
-                    totalCalculado += subtotal; 
-                    hayRecurrentes = true; 
-                }
-
-                // Adicionales
-                const adicionales = document.querySelectorAll('.servicio-grupo:nth-of-type(3) input[type="checkbox"]');
-                adicionales.forEach(input => { 
-                    if (input.checked) { 
-                        hayAdicionales = true; 
-                        const precio = parseFloat(input.dataset.precio) || 0; 
-                        const label = document.querySelector(`label[for='${input.id}']`); 
-                        if (precio > 0) { 
-                            resumenServicios += `- Adicional: ${label ? label.textContent : 'Servicio adicional'} ($${precio.toFixed(2)})\n`; 
-                            totalCalculado += precio; 
-                        } else { 
-                            resumenServicios += `- Adicional: ${label ? label.textContent : 'Servicio adicional'} (Cobro bajo %)\n`; 
-                        } 
-                    } 
-                });
-
-                if (!hayMensualidad && !hayRecurrentes && !hayAdicionales) {
-                    resumenServicios = "(No se seleccionaron servicios específicos)\n";
-                }
-
-                // Construir mensaje final
-                let mensajeFinal = `${mensajeIntro}\n\nEstoy interesado/a en los siguientes servicios:\n${resumenServicios}`;
-                mensajeFinal += `\n-----------------------\n`;
-                if (esRango) { 
-                    mensajeFinal += `*TOTAL MÍNIMO ESTIMADO: $${totalCalculado.toFixed(2)} MXN*\n(El paquete a cotizar se definirá dentro del rango)\n`; 
-                } else { 
-                    mensajeFinal += `*TOTAL ESTIMADO: $${totalCalculado.toFixed(2)} MXN*\n`; 
-                }
-                if (nombreReferido.length > 0) { 
-                    mensajeFinal += `\n*Referido por: ${nombreReferido}*\n`; 
-                    if (descuentoAplicado) { 
-                        mensajeFinal += `(¡Descuento del 10% para ambos aplicado en 1ra mensualidad!)\n`; 
-                    } 
-                }
-                if (hayMensualidad && paqueteSeleccionado && !paqueteSeleccionado.id.includes('asesoria_inicial')) { 
-                    mensajeFinal += `(Total incluye consultas ilimitadas)\n`; 
-                }
-                mensajeFinal += `\n*Todos los precios mostrados incluyen IVA.*\n(Sujeto a revisión y confirmación)`;
-
-                return { mensaje: mensajeFinal }; 
-            }
-
-            // --- Event Listeners Botones ---
-            // Asegurarse de que los botones existan antes de añadir listeners
-            if(botonWhatsApp) {
-                botonWhatsApp.addEventListener('click', () => {
-                    try { // Añadir try-catch para depuración
-                        const { mensaje } = generarMensaje();
-                        const mensajeCodificado = encodeURIComponent(mensaje);
-                        const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
-                        window.open(url, '_blank');
-                    } catch (error) {
-                        console.error("Error al generar o enviar mensaje de cotización:", error);
-                        alert("Hubo un error al intentar enviar la cotización. Revisa la consola para más detalles.");
-                    }
-                });
-            }
-
-            if(botonInfo) {
-                botonInfo.addEventListener('click', () => {
-                    try { // Añadir try-catch para depuración
-                        const mensaje = "¡Hola DAFIC! Saludos. Me gustaría pedir más información sobre sus servicios.";
-                        const mensajeCodificado = encodeURIComponent(mensaje);
-                        const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
-                        window.open(url, '_blank');
-                    } catch (error) {
-                        console.error("Error al enviar mensaje de información:", error);
-                        alert("Hubo un error al intentar contactar. Revisa la consola para más detalles.");
-                    }
-                });
-            }
-            
-            // --- Carga Inicial ---
-            calcularTotal();
-            manejarVisibilidadCampos();
-
-        }); // Fin de DOMContentLoaded
-    </script>
-
-</body>
-</html>
+                         
+                         if (esMens
