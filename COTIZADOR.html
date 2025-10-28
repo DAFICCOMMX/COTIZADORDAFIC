@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador de Servicios Contables</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 5px; 
+            letter-spacing: 1px;
+        }
+        h2.subtitulo {
+            text-align: center;
+            color: #777;
+            font-weight: 400;
+            font-size: 1.5em;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .website-link {
+            display: block;
+            text-align: center;
+            font-size: 1.1em;
+            color: #005a9c;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+        .website-link:hover {
+            text-decoration: underline;
+        }
+        .servicio-grupo, .info-cliente-grupo {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .servicio-grupo h3, .info-cliente-grupo h3 {
+            color: #005a9c;
+            border-bottom: 2px solid #005a9c;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+        .servicio-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px 5px;
+        }
+        .servicio-item-info {
+            flex-grow: 1;
+            overflow: hidden; 
+            word-wrap: break-word;
+            padding-right: 15px;
+        }
+        .servicio-item-info label {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #555;
+            cursor: pointer;
+        }
+        .servicio-item-info .descripcion {
+            font-size: 0.9em;
+            color: #666;
+            padding-left: 20px;
+            display: block;
+            margin-top: 4px;
+        }
+        .servicio-item-info .descripcion.no-padding {
+            padding-left: 0;
+        }
+        .servicio-item .precio-control {
+            display: flex;
+            align-items: center;
+            min-width: 150px; 
+            justify-content: flex-end;
+            text-align: right;
+            padding-top: 3px;
+        }
+        .servicio-item .precio {
+            font-size: 0.9em;
+            color: #777;
+            font-weight: 500;
+        }
+        .leyenda-consultas {
+            text-align: center;
+            font-style: italic;
+            color: #005a9c;
+            font-weight: 500;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f7f6;
+            border-radius: 5px;
+        }
+        input[type="radio"], input[type="checkbox"] {
+            transform: scale(1.3);
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        input[type="number"] {
+            width: 70px;
+            padding: 5px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+            margin-left: 15px;
+        }
+        .info-cliente-grupo .campo {
+            margin-bottom: 15px;
+        }
+        .info-cliente-grupo label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .info-cliente-grupo input[type="text"],
+        .info-cliente-grupo input[type="number"],
+        .info-cliente-grupo textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .info-cliente-grupo textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .info-cliente-grupo .opciones-radio label {
+            display: inline-block;
+            margin-right: 20px;
+            font-weight: normal;
+        }
+        .info-cliente-grupo .opciones-radio input[type="radio"] {
+            margin-right: 5px;
+            transform: scale(1.1);
+        }
+        .campo-condicional {
+            display: none;
+            margin-left: 20px;
+            padding-left: 15px;
+            border-left: 2px solid #eee;
+            margin-top: 10px;
+        }
+        .referido-grupo {
+            background-color: #f4f7f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .referido-grupo label {
+            font-weight: 500;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .referido-grupo input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .referido-grupo small {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 8px;
+        }
+        .descuento-aplicado {
+            display: none;
+            font-size: 1em;
+            font-weight: bold;
+            color: #25D366;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .total-container {
+            text-align: right;
+            margin-top: 30px;
+            font-size: 1.9em;
+            font-weight: bold;
+            color: #005a9c;
+        }
+        .total-container span {
+            display: inline-block;
+            min-width: 150px;
+            text-align: left;
+            background-color: #f4f7f6;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        .boton-whatsapp {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #25D366;
+            color: #ffffff;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 30px;
+            box-sizing: border-box;
+            cursor: pointer;
+            border: none;
+        }
+        .boton-whatsapp:hover {
+            background-color: #128C7E;
+        }
+        .boton-whatsapp.boton-secundario {
+            background-color: #ffffff;
+            color: #005a9c;
+            border: 2px solid #005a9c;
+            margin-top: 15px;
+        }
+        .boton-whatsapp.boton-secundario:hover {
+            background-color: #f4f7f6;
+            color: #004a80;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>COTIZADOR DE SERVICIOS</h1>
+        <h2 class="subtitulo">DAFIC</h2>
+        
+        <a href="https://dafic.com.mx" class="website-link" target="_blank" rel="noopener noreferrer">
+            dafic.com.mx
+        </a>
+
+        <div class="servicio-grupo">
+            <h3>Mensualidades</h3>
+            
+            <div class="servicio-item">
+                <div class="servicio-item-info">
+                    <input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="700" id="pf_basico" data-es-mensualidad="true">
+                    <label for="pf_basico">Paquete PF Básico</label>
+                    <small class="descripcion">Ideal para RESICO (PF) y Arrendamiento. Incluye: Cálculo y presentación de impuestos mensuales (ISR, IVA). Límite: 25 CFDI/mes.</small>
+                </div>
+                <div class="precio-control">
+                    <span class="precio">$700.00</span>
+                </div>
+            </div>
+            <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="800" id="pf_intermedio" data-es-mensualidad="true"><label for="pf_intermedio">Paquete PF Intermedio (Plataformas)</label><small class="descripcion">Únicamente para Plataformas Digitales. Incluye: Cálculo de impuestos (ISR, IVA) y DIOT. Límite: 50 CFDI/mes.</small></div><div class="precio-control"><span class="precio">$800.00</span></div></div>
+            <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="1000" id="pf_avanzado" data-es-mensualidad="true"><label for="pf_avanzado">Paquete PF Avanzado (RAEP)</label><small class="descripcion">Para Personas Físicas con Actividad Empresarial (RAEP). Incluye: Impuestos (ISR, IVA), DIOT y Cont. Electrónica. Límite: 100 CFDI/mes.</small></div><div class="precio-control"><span class="precio">$1,000.00</span></div></div>
+            <hr style="border:0; border-top:1px dashed #ccc; margin: 15px 0;">
+            <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="3000" id="pm_personalizado" data-es-mensualidad="true"><label for="pm_personalizado">Paquete Persona Moral (A cotizar)</label><small class="descripcion">Para PM (Régimen General o RESICO). El precio final se define según volumen y complejidad.</small></div><div class="precio-control"><span class="precio">$3,000 - $15,000</span></div></div>
+            <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="5000" id="contador_externo" data-es-mensualidad="true"><label for="contador_externo">Servicio de Contador Externo</label><small class="descripcion">Servicios de contraloría, auditoría interna, consultoría financiera o fiscal estratégica.</small></div><div class="precio-control"><span class="precio">$5,000 - $10,000</span></div></div>
+            <hr style="border:0; border-top:1px dashed #ccc; margin: 15px 0;">
+            <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="1000" id="asesoria_inicial_pf" data-es-mensualidad="false"><label for="asesoria_inicial_pf">Asesoría Inicial (Persona Física)</label><small class="descripcion">Consulta única (2hrs) para diagnóstico fiscal o planificación PF.</small></div><div class="precio-control"><span class="precio">$1,000.00</span></div></div>
+            <div class="servicio-item"><div class="servicio-item-info"><input type="radio" class="servicio-calculo" name="paquete_iguala" data-precio="3000" id="asesoria_inicial_pm" data-es-mensualidad="false"><label for="asesoria_inicial_pm">Asesoría Inicial (Persona Moral)</label><small class="descripcion">Consulta única (3hrs) para diagnóstico fiscal o planificación PM.</small></div><div class="precio-control"><span class="precio">$3,000.00</span></div></div>
+            <div class="leyenda-consultas">Nota: Todos los Paquetes (PF y PM) incluyen consultas ilimitadas.</div>
+        </div>
+        
+        <div class="servicio-grupo">
+            <h3>2. Servicios Recurrentes</h3>
+            <div class="servicio-item"><div class="servicio-item-info"><div style="display: flex; align-items: center;"><label for="nomina">Empleados en Nómina</label><input type="number" class="servicio-calculo" data-precio="90" min="0" value="0" id="nomina"></div><small class="descripcion no-padding">Cálculo, timbrado de recibos y cálculo de impuestos (IMSS, ISN).</small></div><div class="precio-control"><span class="precio">$90.00 c/u</span></div></div>
+        </div>
+        
+        <div class="servicio-grupo">
+            <h3>3. Servicios Adicionales (Pago Único)</h3>
+             <div class="servicio-item"><div class="servicio-item-info"><input type="checkbox" class="servicio-calculo" data-precio="1200" id="anual_pf"><label for="anual_pf">Declaración Anual (Persona Física)</label><small class="descripcion">Presentación anual (externo). **Si hay saldo a favor, se cobra 10% adicional sobre el monto recuperado**.</small></div><div class="precio-control"><span class="precio">$1,200.00</span></div></div>
+            <div class="servicio-item"><div class="servicio-item-info"><input type="checkbox" class="servicio-calculo" data-precio="5000" id="anual_pm"><label for="anual_pm">Declaración Anual (Persona Moral)</label><small class="descripcion">Presentación de declaración anual para PM (clientes externos).</small></div><div class="precio-control"><span class="precio">$5,000.00</span></div></div>
+            <div class="servicio-item"><div class="servicio-item-info"><input type="checkbox" class="servicio-calculo" data-precio="500" id="alta_imss"><label for="alta_imss">Alta Patronal IMSS</label><small class="descripcion">Trámite único de registro de la empresa ante el IMSS.</small></div><div class="precio-control"><span class="precio">$500.00</span></div></div>
+            <div class="servicio-item"><div class="servicio-item-info"><input type="checkbox" class="servicio-calculo" data-precio="0" id="devolucion"><label for="devolucion">Gestión de Devolución de Impuestos</label><small class="descripcion">Trámite de devolución de IVA, ISR, etc. **Se cobra el 20% sobre el monto total devuelto**.</small></div><div class="precio-control"><span class="precio">(Bajo %)</span></div></div>
+             <div class="servicio-item"><div class="servicio-item-info"><input type="checkbox" class="servicio-calculo" data-precio="500" id="efirma"><label for="efirma">Trámite de e.firma (Gestión)</label><small class="descripcion">Asesoría y gestión para obtención de cita o renovación de e.firma.</small></div><div class="precio-control"><span class="precio">$500.00</span></div></div>
+        </div>
+
+        <div class="info-cliente-grupo">
+            <h3>4. Información Adicional</h3>
+            <div class="campo"><label for="nombre_cliente">Tu Nombre</label><input type="text" id="nombre_cliente" placeholder="¿Cómo te llamas?"></div>
+            <div class="campo"><label for="giro">Giro de la empresa</label><input type="text" id="giro" placeholder="Ej: Restaurante, Consultoría, Comercio, etc."></div>
+            <div class="campo"><label for="anios">Años con el negocio</label><input type="number" id="anios" min="0" placeholder="Ej: 3"></div>
+            <div class="campo"><label>¿Están dados de alta en el SAT?</label><div class="opciones-radio"><label><input type="radio" name="alta_sat" value="si" id="alta_sat_si"> Sí</label><label><input type="radio" name="alta_sat" value="no" id="alta_sat_no"> No</label></div></div>
+            <div id="grupo_declaraciones" class="campo-condicional"><div class="campo"><label>Si sí, ¿presentan declaraciones actualmente?</label><div class="opciones-radio"><label><input type="radio" name="declaran" value="si" id="declaran_si"> Sí</label><label><input type="radio" name="declaran" value="no" id="declaran_no"> No</label></div></div><div id="grupo_atraso" class="campo-condicional"><div class="campo"><label for="meses_atraso">Si no declaran, ¿cuántos meses de atraso tienen aproximadamente?</label><input type="number" id="meses_atraso" min="0" placeholder="Ej: 6"></div></div></div>
+            <div class="campo"><label for="direccion">Dirección del negocio (Calle, Número, Colonia, Municipio)</label><textarea id="direccion" placeholder="Ej: Av. Siempre Viva 123, Col. Centro, Zapopan"></textarea></div>
+            <div class="campo"><label for="dias_visita">Días y horarios preferidos para visita</label><input type="text" id="dias_visita" placeholder="Ej: Lunes o Miércoles por la tarde, Viernes antes de las 12pm"></div>
+        </div>
+
+        <div class="referido-grupo">
+            <label for="referido">¿Alguien te recomendó con nosotros?</label>
+            <input type="text" id="referido" class="servicio-calculo" placeholder="Escribe el nombre de quien te refirió">
+            <small>¡Si es tu primera vez, <strong>ambos</strong> (tú y la persona que te refirió) obtienen un 10% de descuento en la primera mensualidad de un paquete!</small>
+            <div id="descuento-texto" class="descuento-aplicado">
+                ¡10% de descuento aplicado a la mensualidad!
+            </div>
+        </div>
+        
+        <div class="total-container">
+            TOTAL MÍNIMO (MXN): $ <span id="total-display">0.00</span>
+        </div>
+
+        <button id="enviar-whatsapp" class="boton-whatsapp">
+            Enviar Cotización por WhatsApp
+        </button>
+
+        <button id="info-whatsapp" class="boton-whatsapp boton-secundario">
+            Solicitar más Información
+        </button>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Lista de Referidos Válidos ---
+            const listaNombresValidos = ["ALEJANDRA DELGADO GAYTAN","ALEJANDRA ENRIQUEZ LUNA","ALEJANDRO PRIETO AVILA","ALONZO MARMOLEJOMENDIOLA","ARACELI ROBLES CASTILLO","ASTRID PARRA NORIEGA","BRYAN YAIR AVILA SANTILLAN","CARLOS ANTONIO CARDONA ALERIANO","CARLOS OCTAVIO ROSALES GARCIA","COLEGIO DE REUMATOLOGOS DE AGUASCALIENTES","DANIELA ALEJANDRA SALDAÑA GAYTAN","EDSG","ERICK GEOVANNI MIRANDA BALDOVINES","GUADALUPE ESTHER CHAVEZ MATA","GUILLERMO JOSEPH GARCIA","IVAN ALEJANDRO MEDINA PEREZ","JESUS ALBERTO SOTOMAYOR","JESUS OMAR AVILA SANTILLAN","JOSE ANTONIO DURAN HERNANDEZ","JOSE LUIS ESPINOZA LOPEZ","JUAN ANGEL FLORES PACHECO","JUAN ANTONIO DIAZ RODRIGUEZ","JULIA MENDOZA NUÑEZ","KAREN JUAREZ NICOLAS","LUCY GARCIA","MARCO ANTONIO PAREDES VELAZQUEZ","MARIZA SANTILLAN ORTIZ","MARTIN SANTILLAN GOMEZ","MIGUEL ANGEL VIVEROS PEREZ","NIDIA FERNANDEZ ESPINOSA","ROBEROTO OLMEDO HERNANDEZ","RODOLFO CARDENAS JIMENEZ","VIANNEY PARRA NORIEGA","VICTOR HUGO TENORIO MARTINEZ","YADIRA CAROLANA MORALES SANCHEZ","JONATHAN"];
+            const validReferrers = listaNombresValidos.map(name => name.toUpperCase().trim());
+            
+            // --- Selectores de Elementos ---
+            const inputsCalculo = document.querySelectorAll('.servicio-calculo');
+            const totalDisplay = document.getElementById('total-display');
+            const campoReferido = document.getElementById('referido');
+            const textoDescuento = document.getElementById('descuento-texto');
+            const radioAltaSatSi = document.getElementById('alta_sat_si');
+            const radioAltaSatNo = document.getElementById('alta_sat_no');
+            const grupoDeclaraciones = document.getElementById('grupo_declaraciones');
+            const radioDeclaranSi = document.getElementById('declaran_si');
+            const radioDeclaranNo = document.getElementById('declaran_no');
+            const grupoAtraso = document.getElementById('grupo_atraso');
+            const botonWhatsApp = document.getElementById('enviar-whatsapp');
+            const botonInfo = document.getElementById('info-whatsapp');
+            const telefono = "523329780881"; // Tu número
+
+            // --- Función Principal de Cálculo ---
+            function calcularTotal() {
+                let total = 0;
+                let descuentoAplicado = false;
+                const nombreReferidoEstandarizado = campoReferido ? campoReferido.value.trim().toUpperCase() : ""; 
+                const esReferidoValido = validReferrers.includes(nombreReferidoEstandarizado);
+                
+                const paqueteSeleccionado = document.querySelector('input[name="paquete_iguala"]:checked');
+                let precioPaquete = 0;
+                if (paqueteSeleccionado) {
+                    precioPaquete = parseFloat(paqueteSeleccionado.dataset.precio) || 0;
+                    const esMensualidad = paqueteSeleccionado.dataset.esMensualidad === 'true';
+                    if (esMensualidad && esReferidoValido) {
+                        precioPaquete *= 0.90; 
+                        descuentoAplicado = true;
+                    }
+                }
+                total += precioPaquete;
+                if (textoDescuento) {
+                    textoDescuento.style.display = descuentoAplicado ? 'block' : 'none';
+                }
+
+                const nominaInput = document.getElementById('nomina');
+                const nominaCantidad = nominaInput ? (parseInt(nominaInput.value) || 0) : 0;
+                if (nominaCantidad > 0) {
+                    total += (parseFloat(nominaInput.dataset.precio) || 0) * nominaCantidad;
+                }
+
+                const adicionales = document.querySelectorAll('.servicio-grupo:nth-of-type(3) input[type="checkbox"]');
+                adicionales.forEach(input => {
+                    if (input.checked) {
+                        total += (parseFloat(input.dataset.precio) || 0);
+                    }
+                });
+
+                if (totalDisplay) {
+                    totalDisplay.textContent = total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                }
+            }
+            
+            // --- Event Listeners para Recalcular ---
+            inputsCalculo.forEach(input => {
+                input.addEventListener('change', calcularTotal);
+                input.addEventListener('input', calcularTotal); 
+            });
+            
+            // --- Lógica Campos Condicionales ---
+            function manejarVisibilidadCampos() {
+                 if (radioAltaSatSi && grupoDeclaraciones && grupoAtraso && radioDeclaranNo && radioDeclaranSi) {
+                     if (radioAltaSatSi.checked) {
+                        grupoDeclaraciones.style.display = 'block';
+                        if (radioDeclaranNo.checked) {
+                            grupoAtraso.style.display = 'block';
+                        } else {
+                            grupoAtraso.style.display = 'none';
+                        }
+                    } else {
+                        grupoDeclaraciones.style.display = 'none';
+                        grupoAtraso.style.display = 'none';
+                    }
+                 } 
+            }
+            if(radioAltaSatSi) radioAltaSatSi.addEventListener('change', manejarVisibilidadCampos);
+            if(radioAltaSatNo) radioAltaSatNo.addEventListener('change', manejarVisibilidadCampos);
+            if(radioDeclaranSi) radioDeclaranSi.addEventListener('change', manejarVisibilidadCampos);
+            if(radioDeclaranNo) radioDeclaranNo.addEventListener('change', manejarVisibilidadCampos);
+            
+            // --- Función para Generar Mensaje WhatsApp ---
+            function generarMensaje() {
+                // Leer info cliente
+                const nombreCliente = document.getElementById('nombre_cliente')?.value.trim() || "Cliente";
+                const giro = document.getElementById('giro')?.value.trim() || "No especificado";
+                const anios = document.getElementById('anios')?.value.trim() || "No especificado";
+                const altaSatRadio = document.querySelector('input[name="alta_sat"]:checked');
+                let infoSituacionFiscal = "Situación SAT no especificada.";
+                if (altaSatRadio) { 
+                    if (altaSatRadio.value === 'si') { 
+                        infoSituacionFiscal = " Sí estoy dado de alta en el SAT."; 
+                        const declaranRadio = document.querySelector('input[name="declaran"]:checked'); 
+                        if (declaranRadio) { 
+                            if (declaranRadio.value === 'si') { 
+                                infoSituacionFiscal += " Actualmente declaro."; 
+                            } else { 
+                                infoSituacionFiscal += " No declaro actualmente."; 
+                                const mesesAtrasoInput = document.getElementById('meses_atraso'); 
+                                const mesesAtraso = mesesAtrasoInput ? mesesAtrasoInput.value.trim() : ""; 
+                                if (mesesAtraso && mesesAtraso !== "0") { 
+                                    infoSituacionFiscal += ` Tengo aproximadamente ${mesesAtraso} meses de atraso.`; 
+                                } 
+                            } 
+                        } else { 
+                            infoSituacionFiscal += " (No especificó si declara actualmente)"; 
+                        } 
+                    } else { 
+                        infoSituacionFiscal = " No estoy dado de alta en el SAT."; 
+                    } 
+                }
+                const direccion = document.getElementById('direccion')?.value.trim() || "No especificada";
+                const diasVisita = document.getElementById('dias_visita')?.value.trim() || "No especificados";
+
+                // Construir parte inicial
+                let mensajeIntro = `¡Hola DAFIC! Soy ${nombreCliente}. `;
+                mensajeIntro += `El giro de mi negocio es ${giro}. `;
+                mensajeIntro += `Tengo ${anios} años con él.`;
+                mensajeIntro += infoSituacionFiscal;
+                mensajeIntro += ` Mi negocio está ubicado en ${direccion}.`;
+                mensajeIntro += ` Me gustaría que me visitaran preferentemente: ${diasVisita}.`;
+                
+                // Resumen de servicios
+                let totalCalculado = 0; // Recalcular total para el mensaje
+                let hayMensualidad = false, hayRecurrentes = false, hayAdicionales = false, esRango = false;
+                const nombreReferido = campoReferido ? campoReferido.value.trim() : "";
+                const nombreReferidoEstandarizado = nombreReferido.toUpperCase();
+                const esReferidoValido = validReferrers.includes(nombreReferidoEstandarizado);
+                let descuentoAplicado = false;
+                let resumenServicios = "";
+
+                // Mensualidades
+                const paqueteSeleccionado = document.querySelector('input[name="paquete_iguala"]:checked');
+                if (paqueteSeleccionado) { 
+                     let precioOriginal = parseFloat(paqueteSeleccionado.dataset.precio) || 0; 
+                     let precioActual = precioOriginal; 
+                     if (precioOriginal > 0) { 
+                         const label = document.querySelector(`label[for='${paqueteSeleccionado.id}']`); 
+                         const precioTextoElement = paqueteSeleccionado.closest('.servicio-item')?.querySelector('.precio');
+                         const precioTexto = precioTextoElement ? precioTextoElement.textContent : "";
+                         const esMensualidad = paqueteSeleccionado.dataset.esMensualidad === 'true'; 
+                         let precioFinalTexto = ""; 
+                         
+                         if (esMens
